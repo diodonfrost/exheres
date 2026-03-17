@@ -1,0 +1,20 @@
+# Copyright 2025 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+require go [ go_minimum_version=1.25.7 ] github [ user=hashicorp tag=v${PV} ]
+
+SUMMARY="Tool for building, changing, and versioning infrastructure safely and efficiently"
+HOMEPAGE="https://www.terraform.io"
+
+LICENCES="BUSL-1.1"
+SLOT="0"
+PLATFORMS="~amd64 ~armv8"
+MYOPTIONS=""
+
+DEPENDENCIES=""
+
+GO_SRC_COMPILE_LDFLAGS=(
+    "-s"
+    "-w"
+    "-X 'github.com/hashicorp/terraform/version.dev=no'"
+)
