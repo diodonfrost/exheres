@@ -1,0 +1,21 @@
+# Copyright 2025 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+require go [ go_minimum_version=1.25.0 package_path=./cmd/helm ] github [ tag=v${PV} ]
+
+SUMMARY="The Kubernetes Package Manager"
+HOMEPAGE="https://helm.sh"
+
+LICENCES="Apache-2.0"
+SLOT="0"
+PLATFORMS="~amd64 ~armv8"
+MYOPTIONS=""
+
+DEPENDENCIES=""
+
+GO_SRC_COMPILE_LDFLAGS=(
+    "-s"
+    "-w"
+    "-X 'helm.sh/helm/v4/internal/version.version=v${PV}'"
+    "-X 'helm.sh/helm/v4/internal/version.gitTreeState=clean'"
+)
