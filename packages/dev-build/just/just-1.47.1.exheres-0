@@ -1,0 +1,14 @@
+# Copyright 2025 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+require cargo [ rust_minimum_version=1.85.0 ] github [ user=casey tag=${PV} ]
+
+SUMMARY="Just a command runner"
+HOMEPAGE="https://just.systems"
+
+LICENCES="CC0-1.0-Universal"
+SLOT="0"
+PLATFORMS="~amd64 ~armv8"
+MYOPTIONS=""
+
+DEPENDENCIES=""
