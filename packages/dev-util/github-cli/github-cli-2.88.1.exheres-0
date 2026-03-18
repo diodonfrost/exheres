@@ -1,0 +1,21 @@
+# Copyright 2025 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+require go [ go_minimum_version=1.26.1 bin_name=gh package_path=./cmd/gh ] github [ user=cli pn=cli tag=v${PV} ]
+
+SUMMARY="GitHub CLI brings GitHub to your terminal"
+HOMEPAGE="https://cli.github.com"
+
+LICENCES="MIT"
+SLOT="0"
+PLATFORMS="~amd64 ~armv8"
+MYOPTIONS=""
+
+DEPENDENCIES=""
+
+GO_SRC_COMPILE_LDFLAGS=(
+    "-s"
+    "-w"
+    "-X 'github.com/cli/cli/v2/internal/build.Version=${PV}'"
+)
+
