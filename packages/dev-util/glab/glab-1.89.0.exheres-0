@@ -1,0 +1,33 @@
+# Copyright 2025 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+require go [ go_minimum_version=1.25.8 package_path=./cmd/glab ]
+
+SUMMARY="GitLab CLI brings GitLab to your terminal"
+HOMEPAGE="https://gitlab.com/gitlab-org/cli"
+
+DOWNLOADS="https://gitlab.com/gitlab-org/cli/-/archive/v${PV}/cli-v${PV}.tar.gz"
+WORK="${WORKBASE}/cli-v${PV}"
+
+LICENCES="MIT"
+SLOT="0"
+PLATFORMS="~amd64 ~armv8"
+MYOPTIONS=""
+
+DEPENDENCIES=""
+
+GO_SRC_COMPILE_LDFLAGS=(
+    "-s"
+    "-w"
+    "-X 'main.version=${PV}'"
+)
+
+src_test() {
+    edo git init
+    edo git config user.email "test@test"
+    edo git config user.name "test"
+    edo git add .
+    edo git commit --allow-empty -m "test"
+    go_src_test
+}
+
