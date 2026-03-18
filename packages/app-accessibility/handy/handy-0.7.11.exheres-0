@@ -1,0 +1,27 @@
+# Copyright 2025 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+require cargo [ crate_path=src-tauri ] github [ user=cjpais tag=v${PV} ]
+
+SUMMARY="Free, open source, and extensible speech-to-text application that works completely offline"
+HOMEPAGE="https://handy.computer"
+
+LICENCES="MIT"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build:
+        dev-node/bun-bin
+    build+run:
+        dev-libs/glib:2
+        x11-libs/gtk+:3
+        net-libs/webkit
+"
+
+src_compile() {
+    edo bun install
+    edo bun run build
+    cargo_src_compile
+}
