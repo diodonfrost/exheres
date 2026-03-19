@@ -1,0 +1,29 @@
+# Copyright 2026 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+require go [ go_minimum_version=1.25.6 ] github [ tag=v${PV} ]
+
+SUMMARY="Infrastructure as Code SDK for building and deploying cloud infrastructure"
+HOMEPAGE="https://www.pulumi.com"
+
+LICENCES="Apache-2.0"
+SLOT="0"
+PLATFORMS="~amd64 ~armv8"
+MYOPTIONS=""
+
+DEPENDENCIES=""
+
+WORK="${WORKBASE}/pulumi-${PV}/pkg"
+
+src_compile() {
+    local ldflags="-s -w -X github.com/pulumi/pulumi/sdk/v3/go/common/version.Version=v${PV}"
+    edo go build -o "${WORK}"/pulumi -ldflags "${ldflags}" ./cmd/pulumi
+}
+
+src_test() {
+    edo "${WORK}"/pulumi version
+}
+
+src_install() {
+    dobin pulumi
+}
