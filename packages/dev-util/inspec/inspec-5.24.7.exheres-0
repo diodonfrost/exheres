@@ -1,0 +1,34 @@
+# Copyright 2026 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+require github [ user=inspec tag=v${PV} ]
+
+SUMMARY="Infrastructure testing framework with a human-readable language"
+HOMEPAGE="https://docs.chef.io/inspec"
+
+LICENCES="Apache-2.0"
+SLOT="0"
+PLATFORMS="~amd64 ~armv8"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build+run:
+        dev-lang/ruby:*[>=3.1]
+"
+
+src_compile() {
+    edo gem build inspec-core.gemspec
+    edo gem build inspec.gemspec
+    edo pushd inspec-bin
+    edo gem build inspec-bin.gemspec
+    edo popd
+}
+
+src_install() {
+    local gem_dir="/usr/$(exhost --target)/lib/ruby/gems"
+    edo gem install --local --no-document --ignore-dependencies --install-dir "${IMAGE}${gem_dir}" inspec-core-${PV}.gem
+    edo gem install --local --no-document --ignore-dependencies --install-dir "${IMAGE}${gem_dir}" inspec-${PV}.gem
+    edo gem install --local --no-document --ignore-dependencies --install-dir "${IMAGE}${gem_dir}" inspec-bin/inspec-bin-${PV}.gem
+    edo find "${IMAGE}${gem_dir}" -type d -empty -delete
+    dobin inspec-bin/bin/inspec
+}
