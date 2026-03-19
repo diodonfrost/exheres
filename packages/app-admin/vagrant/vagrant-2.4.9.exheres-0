@@ -1,0 +1,29 @@
+# Copyright 2025 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+require github [ user=hashicorp tag=v${PV} ]
+
+SUMMARY="Tool for building and distributing development environments"
+HOMEPAGE="https://www.vagrantup.com"
+
+LICENCES="BUSL-1.1"
+SLOT="0"
+PLATFORMS="~amd64 ~armv8"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build+run:
+        dev-lang/ruby:*[>=3.0&<3.5]
+        dev-libs/openssl:3
+"
+
+src_compile() {
+    gem build vagrant.gemspec
+}
+
+src_install() {
+    local gem_dir="/usr/$(exhost --target)/lib/ruby/gems"
+    edo gem install --local --no-document --ignore-dependencies --install-dir "${IMAGE}${gem_dir}" vagrant-${PV}.gem
+    edo find "${IMAGE}${gem_dir}" -type d -empty -delete
+    dobin bin/vagrant
+}
