@@ -1,0 +1,28 @@
+# Copyright 2026 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+SUMMARY="Incredibly fast JavaScript runtime, bundler, test runner, and package manager"
+HOMEPAGE="https://bun.sh"
+
+DOWNLOADS="https://github.com/oven-sh/bun/releases/download/bun-v${PV}/bun-linux-x64.zip"
+
+LICENCES="MIT"
+SLOT="0"
+PLATFORMS="~amd64"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    build:
+        app-arch/unzip
+"
+
+WORK="${WORKBASE}/bun-linux-x64"
+
+src_unpack() {
+    edo cd "${WORKBASE}"
+    edo unzip -qo "${FETCHEDDIR}/bun-linux-x64.zip"
+}
+
+src_install() {
+    dobin bun
+}
