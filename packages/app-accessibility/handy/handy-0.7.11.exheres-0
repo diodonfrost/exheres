@@ -1,7 +1,7 @@
 # Copyright 2025 diodonfrost <diodon.frost@diodonfrost.me>
 # Distributed under the terms of the GNU General Public License v2
 
-require cargo [ crate_path=src-tauri ] github [ user=cjpais tag=v${PV} ]
+require cargo [ crate_path=src-tauri rust_minimum_version=1.85.0 ] github [ user=cjpais tag=v${PV} ]
 
 SUMMARY="Free, open source, and extensible speech-to-text application that works completely offline"
 HOMEPAGE="https://handy.computer"
@@ -16,12 +16,42 @@ DEPENDENCIES="
         dev-node/bun-bin
     build+run:
         dev-libs/glib:2
+        wayland-libs/gtk-layer-shell
         x11-libs/gtk+:3
-        net-libs/webkit
+        net-libs/webkit:4.1
 "
 
 src_compile() {
     edo bun install
     edo bun run build
     cargo_src_compile
+}
+
+src_install() {
+    dobin src-tauri/target/release/handy
+
+    insinto /usr/lib/Handy/resources
+    doins -r src-tauri/resources/*
+
+    insinto /usr/share/icons/hicolor/32x32/apps
+    newins src-tauri/icons/32x32.png handy.png
+
+    insinto /usr/share/icons/hicolor/64x64/apps
+    newins src-tauri/icons/64x64.png handy.png
+
+    insinto /usr/share/icons/hicolor/128x128/apps
+    newins src-tauri/icons/128x128.png handy.png
+
+    insinto /usr/share/icons/hicolor/256x256/apps
+    newins src-tauri/icons/128x128@2x.png handy.png
+
+    insinto /usr/share/applications
+    hereins handy.desktop <<EOF
+[Desktop Entry]
+Type=Application
+Name=Handy
+Exec=handy
+Icon=handy
+Categories=Audio;Accessibility;Utility;
+EOF
 }
