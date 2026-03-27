@@ -1,0 +1,52 @@
+FROM ghcr.io/diodonfrost/exherbo-ci-rust:latest
+
+# Paludis config for the diodonfrost repository
+RUN mkdir -p /pbins && \
+    printf '%s\n' \
+        'format = e' \
+        'location = /var/db/paludis/repositories/diodonfrost' \
+        'masters = arbor' \
+        'importance = 10' \
+    > /etc/paludis/repositories/diodonfrost.conf
+
+COPY . /var/db/paludis/repositories/diodonfrost
+
+# Fix masters to use only arbor (available in the base image)
+RUN sed -i 's/masters = arbor CleverCloud/masters = arbor/' \
+    /var/db/paludis/repositories/diodonfrost/metadata/layout.conf
+
+RUN printf '%s\n' \
+        '*/* X opengl wayland icu harfbuzz gobject-introspection polkit systemd build_options: -recommended_tests' \
+        'app-arch/brotli python' \
+        'app-text/ghostscript tiff' \
+        'app-text/poppler lcms' \
+        'base/libblockdev smart' \
+        'kde-frameworks/kimageformats avif' \
+        'kde-frameworks/prison scanner pdf417' \
+        'media-plugins/gst-plugins-base GSTREAMER_PLUGINS: ogg opengl opus vorbis' \
+        'sys-apps/systemd polkit' \
+        'x11-libs/gdk-pixbuf gobject-introspection' \
+        'x11-libs/qt5compat qtgraphicaleffects5' \
+        'x11-libs/qtbase:5 sql sqlite' \
+        'x11-libs/qtbase:6 cups glib vulkan' \
+        'x11-libs/qtimageformats tiff webp' \
+        'x11-libs/qtmultimedia qml' \
+        'x11-libs/qtpositioning qml' \
+        'x11-libs/libxkbcommon xkbregistry' \
+        'media-libs/opencv qt6 -wayland' \
+        'x11-libs/qtwebchannel qml' \
+    >> /etc/paludis/options.conf
+
+RUN cave sync && \
+    cave resolve -x1 repository/hardware && \
+    cave resolve -x1 repository/kde
+
+# Sync newly added repos and add write_cache to all repo configs
+# so metadata is persisted in the image (avoids slow on-the-fly generation)
+RUN for conf in /etc/paludis/repositories/*.conf; do \
+        grep -q write_cache "$conf" || \
+            echo 'write_cache = /var/cache/paludis/metadata' >> "$conf"; \
+    done && \
+    cave sync
+
+WORKDIR /var/db/paludis/repositories/diodonfrost
