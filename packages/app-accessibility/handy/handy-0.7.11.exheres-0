@@ -1,38 +1,85 @@
 # Copyright 2025 diodonfrost <diodon.frost@diodonfrost.me>
 # Distributed under the terms of the GNU General Public License v2
 
-require cargo [ crate_path=src-tauri rust_minimum_version=1.85.0 ] github [ user=cjpais tag=v${PV} ]
-
-WORK="${WORKBASE}/Handy-${PV}"
+require cargo [ crate_path=src-tauri rust_minimum_version=1.85.0 ] github [ user=cjpais pn=Handy tag=v${PV} ]
 
 SUMMARY="Free, open source, and extensible speech-to-text application that works completely offline"
 HOMEPAGE="https://handy.computer"
 
+WORK="${WORKBASE}/Handy-${PV}"
 LICENCES="MIT"
 SLOT="0"
 PLATFORMS="~amd64"
 MYOPTIONS=""
+
+ONNXRUNTIME_VERSION="1.22.0"
 
 DEPENDENCIES="
     build:
         dev-node/bun-bin
     build+run:
         dev-libs/glib:2
+        dev-libs/libayatana-appindicator
         wayland-libs/gtk-layer-shell
         x11-libs/gtk+:3
         net-libs/webkit:4.1
 "
 
-src_compile() {
+src_unpack() {
+    cargo_src_unpack
+    edo cd "${WORK}"
+    esandbox disable_net
     edo bun install
+
+    # Pre-download onnxruntime binaries (ort-sys tries to download during build)
+    local ort_dir="${WORKBASE}/onnxruntime"
+    edo mkdir -p "${ort_dir}"
+    edo wget -q -O "${WORKBASE}/onnxruntime.tgz" \
+        "https://cdn.pyke.io/0/pyke:ort-rs/ms@${ONNXRUNTIME_VERSION}/x86_64-unknown-linux-gnu.tgz"
+    edo tar xzf "${WORKBASE}/onnxruntime.tgz" -C "${ort_dir}"
+
+    esandbox enable_net
+}
+
+src_prepare() {
+    default
+
+    # autocfg in indexmap 1.9.3 fails to detect std in the paludis sandbox,
+    # causing schemars 0.8.x to fail with E0107 (IndexMap missing default S param).
+    # Force has_std since we always build with std available.
+    local indexmap_dir="${WORKBASE}/ecargo-vendor/indexmap-1.9.3"
+    edo sed -i 's|autocfg::new().emit_sysroot_crate("std")|autocfg::emit("has_std")|' \
+        "${indexmap_dir}"/build.rs
+    edo sed -i 's/"files":{[^}]*}/"files":{}/' "${indexmap_dir}"/.cargo-checksum.json
+
+    # Disable Vulkan for whisper-rs on Linux: ggml-vulkan.cpp is incompatible
+    # with system Vulkan 1.4 C++ headers. CPU inference works fine without it.
+    local transcribe_dir="${WORKBASE}/ecargo-vendor/transcribe-rs"
+    edo sed -i '/features = \["vulkan"\]/d' "${transcribe_dir}"/Cargo.toml
+    edo sed -i 's/"files":{[^}]*}/"files":{}/' "${transcribe_dir}"/.cargo-checksum.json
+
+    # ferrous-opencc has an internal Cargo.lock with pinned versions that mismatch
+    # the vendored sources. Remove it so cargo metadata resolves from vendor dir.
+    local focc_dir="${WORKBASE}/ecargo-vendor/ferrous-opencc"
+    edo rm "${focc_dir}"/Cargo.lock
+    edo sed -i 's/"files":{[^}]*}/"files":{}/' "${focc_dir}"/.cargo-checksum.json
+
+    # Enable custom-protocol feature on tauri to build in production mode.
+    # Without this, tauri compiles with --cfg dev and expects a dev server.
+    edo sed -i '/^tauri = /s/features = \[/features = [\n  "custom-protocol",/' \
+        "${WORK}"/src-tauri/Cargo.toml
+}
+
+src_compile() {
     edo bun run build
+    export ORT_LIB_LOCATION="${WORKBASE}/onnxruntime/onnxruntime"
     cargo_src_compile
 }
 
 src_install() {
-    dobin src-tauri/target/release/handy
+    dobin src-tauri/target/x86_64-unknown-linux-gnu/release/handy
 
-    insinto /usr/lib/Handy/resources
+    insinto /usr/$(exhost --target)/lib/Handy/resources
     doins -r src-tauri/resources/*
 
     insinto /usr/share/icons/hicolor/32x32/apps
