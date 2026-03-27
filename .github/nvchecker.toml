@@ -1,0 +1,92 @@
+[__config__]
+oldver = "old_ver.json"
+newver = "new_ver.json"
+
+["app-accessibility/handy"]
+source = "github"
+github = "cjpais/Handy"
+use_latest_release = true
+prefix = "v"
+
+["app-admin/helm"]
+source = "github"
+github = "helm/helm"
+use_latest_release = true
+prefix = "v"
+
+["app-admin/kubectl"]
+source = "github"
+github = "kubernetes/kubernetes"
+use_latest_release = true
+prefix = "v"
+
+["app-admin/packer"]
+source = "github"
+github = "hashicorp/packer"
+use_latest_release = true
+prefix = "v"
+
+["app-admin/pulumi"]
+source = "github"
+github = "pulumi/pulumi"
+use_latest_release = true
+prefix = "v"
+
+["app-admin/terraform"]
+source = "github"
+github = "hashicorp/terraform"
+use_latest_release = true
+prefix = "v"
+
+["app-admin/terragrunt"]
+source = "github"
+github = "gruntwork-io/terragrunt"
+use_latest_release = true
+prefix = "v"
+
+["app-admin/vagrant"]
+source = "github"
+github = "hashicorp/vagrant"
+use_latest_release = true
+prefix = "v"
+
+["app-crypt/sops"]
+source = "github"
+github = "getsops/sops"
+use_latest_release = true
+prefix = "v"
+
+["dev-build/just"]
+source = "github"
+github = "casey/just"
+use_latest_release = true
+
+["dev-node/bun-bin"]
+source = "github"
+github = "oven-sh/bun"
+use_latest_release = true
+prefix = "bun-v"
+
+["dev-util/github-cli"]
+source = "github"
+github = "cli/cli"
+use_latest_release = true
+prefix = "v"
+
+["dev-util/glab"]
+source = "gitlab"
+gitlab = "gitlab-org/cli"
+use_max_tag = true
+prefix = "v"
+
+["dev-util/inspec"]
+source = "github"
+github = "inspec/inspec"
+use_latest_release = true
+prefix = "v"
+
+["www-client/servo"]
+source = "github"
+github = "servo/servo"
+use_latest_release = true
+prefix = "v"

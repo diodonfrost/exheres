@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+    paths-ignore:
+      - "*.md"
+      - "LICENSE"
+      - ".devcontainer/**"
+  push:
+    branches: [master]
+    paths-ignore:
+      - "*.md"
+      - "LICENSE"
+      - ".devcontainer/**"
+
+jobs:
+  detect-changed-packages:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.detect.outputs.packages }}
+      has_packages: ${{ steps.detect.outputs.has_packages }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed exheres
+        id: detect
+        run: |
+          CHANGED_EXHERES=$(git diff --name-only --diff-filter=AM ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} \
+            | grep '\.exheres-0$' || true)
+
+          if [ -z "$CHANGED_EXHERES" ]; then
+            echo "has_packages=false" >> "$GITHUB_OUTPUT"
+            echo "packages=[]" >> "$GITHUB_OUTPUT"
+            echo "No changed exheres detected"
+            exit 0
+          fi
+
+          # Extract atoms: packages/app-admin/helm/helm-4.1.3.exheres-0 -> app-admin/helm-4.1.3
+          PACKAGES=$(echo "$CHANGED_EXHERES" | while read -r exheres; do
+            rel="${exheres#packages/}"
+            dir=$(dirname "$rel")
+            base=$(basename "$rel" .exheres-0)
+            echo "${dir%/*}/${base}"
+          done | sort -u | jq -R -s -c 'split("\n") | map(select(. != ""))')
+
+          echo "packages=${PACKAGES}" >> "$GITHUB_OUTPUT"
+          echo "has_packages=true" >> "$GITHUB_OUTPUT"
+          echo "Changed packages: ${PACKAGES}"
+
+  build-test:
+    needs: [detect-changed-packages]
+    if: needs.detect-changed-packages.outputs.has_packages == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package: ${{ fromJson(needs.detect-changed-packages.outputs.packages) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: extractions/setup-just@v3
+
+      - name: Test build ${{ matrix.package }}
+        timeout-minutes: 120
+        run: just test-build "${{ matrix.package }}"
+
+  ci-gate:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [build-test]
+    steps:
+      - name: Check CI results
+        run: |
+          if [[ "${{ needs.build-test.result }}" == "failure" ]]; then
+            echo "CI failed"
+            exit 1
+          fi
