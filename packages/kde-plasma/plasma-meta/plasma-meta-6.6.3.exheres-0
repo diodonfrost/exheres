@@ -1,0 +1,119 @@
+# Copyright 2026 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+SUMMARY="Meta package to pull in all Plasma 6 packages"
+HOMEPAGE="https://kde.org/plasma-desktop/"
+DOWNLOADS=""
+
+LICENCES="GPL-2"
+SLOT="0"
+PLATFORMS="~amd64 ~armv8"
+MYOPTIONS="
+    bluetooth [[ description = [ Bluetooth device management via Bluedevil ] ]]
+    browser-integration [[ description = [ Integration of web browsers with the Plasma desktop ] ]]
+    crash-handler [[ description = [ Crash reporting via DrKonqi ] ]]
+    crypt [[ description = [ Plasma Vault for creating encrypted storage ] ]]
+    cups [[ description = [ Printing support via print-manager ] ]]
+    discover [[ description = [ Software center for managing applications ] ]]
+    elogind [[ description = [ Session management via elogind ] ]]
+    flatpak [[ description = [ Flatpak integration in system settings ] ]]
+    gtk [[ description = [ GTK+ integration and theming ] ]]
+    kwallet [[ description = [ KWallet PAM integration for automatic wallet unlocking ] ]]
+    networkmanager [[ description = [ Network management via plasma-nm ] ]]
+    ocr [[ description = [ Optical Character Recognition support via Tesseract ] ]]
+    oxygen-theme [[ description = [ Oxygen visual style and icons ] ]]
+    pulseaudio [[ description = [ PulseAudio volume management applet ] ]]
+    sddm [[ description = [ SDDM display manager and configuration module ] ]]
+    sdk [[ description = [ Plasma development tools ] ]]
+    smart [[ description = [ Hard disk health monitoring via S.M.A.R.T. ] ]]
+    systemd [[ description = [ Session management via systemd ] ]]
+    thunderbolt [[ description = [ Thunderbolt device management ] ]]
+    wallpapers [[ description = [ Additional Plasma wallpapers ] ]]
+    webengine [[ description = [ KDE Help Center for documentation ] ]]
+    X [[ description = [ X11 support ] ]]
+    ( elogind systemd ) [[ number-selected = exactly-one ]]
+"
+
+DEPENDENCIES="
+    run:
+        kde/aurorae[>=6.6.3]
+        kde/kactivitymanagerd[>=6.6.3]
+        kde/kde-cli-tools[>=6.6.3]
+        kde/kdecoration[>=6.6.3]
+        kde/kdeplasma-addons[>=6.6.3]
+        kde/kglobalacceld[>=6.6.3]
+        kde/kinfocenter[>=6.6.3]
+        kde/kmenuedit[>=6.6.3]
+        kde/knighttime[>=6.6.3]
+        kde/kscreen[>=6.6.3]
+        kde/kscreenlocker[>=6.6.3]
+        kde/ksshaskpass[>=6.6.3]
+        kde/ksystemstats[>=6.6.3]
+        kde/kwayland[>=6.6.3]
+        kde/kwin[>=6.6.3]
+        kde/kwrited[>=6.6.3]
+        kde/layer-shell-qt[>=6.6.3]
+        kde/libksysguard[>=6.6.3]
+        kde/libplasma[>=6.6.3]
+        kde/milou[>=6.6.3]
+        kde/plasma-activities[>=6.6.3]
+        kde/plasma-activities-stats[>=6.6.3]
+        kde/plasma-desktop[>=6.6.3]
+        kde/plasma-integration[>=6.6.3]
+        kde/plasma-systemmonitor[>=6.6.3]
+        kde/plasma-workspace[>=6.6.3]
+        kde/plasma5support[>=6.6.3]
+        kde/powerdevil[>=6.6.3]
+        kde/qqc2-breeze-style[>=6.6.3]
+        kde/spectacle[>=6.6.3]
+        kde/systemsettings[>=6.6.3]
+        kde/xdg-desktop-portal-kde[>=6.6.3]
+        kde-frameworks/libkscreen[>=6.6.3]
+        media-libs/kpipewire[>=6.6.3]
+        sys-apps/dbus
+        sys-apps/udisks:2
+        sys-auth/polkit
+        sys-auth/polkit-kde-agent
+        bluetooth? ( net-wireless/bluedevil[>=6.6.3] )
+        browser-integration? ( kde/plasma-browser-integration[>=6.6.3] )
+        crash-handler? ( kde/drkonqi[>=6.6.3] )
+        crypt? ( kde/plasma-vault[>=6.6.3] )
+        cups? (
+            kde/print-manager[>=6.6.3]
+            net-print/cups
+        )
+        discover? ( kde/discover[>=6.6.3] )
+        elogind? ( sys-auth/elogind )
+        flatpak? ( kde/flatpak-kcm[>=6.6.3] )
+        gtk? (
+            kde/kde-gtk-config[>=6.6.3]
+            sys-apps/xdg-desktop-portal-gtk
+            x11-themes/breeze-gtk[>=6.6.3]
+        )
+        kwallet? ( kde/kwallet-pam[>=6.6.3] )
+        networkmanager? (
+            kde/plasma-nm[>=6.6.3]
+            net-apps/NetworkManager
+        )
+        ocr? ( app-text/tesseract )
+        oxygen-theme? (
+            kde/oxygen[>=6.6.3]
+            kde/oxygen-sounds[>=6.6.3]
+            kde-frameworks/oxygen-icons5
+        )
+        pulseaudio? ( kde/plasma-pa[>=6.6.3] )
+        sddm? (
+            kde/sddm-kcm[>=6.6.3]
+            sys-auth/sddm
+        )
+        sdk? ( kde/plasma-sdk[>=6.6.3] )
+        smart? ( kde/plasma-disks[>=6.6.3] )
+        systemd? ( sys-apps/systemd )
+        thunderbolt? ( kde/plasma-thunderbolt[>=6.6.3] )
+        wallpapers? ( kde/plasma-workspace-wallpapers[>=6.6.3] )
+        webengine? ( kde/khelpcenter )
+        X? (
+            kde/kgamma5[>=6.6.3]
+            kde/kwin-x11[>=6.6.3]
+        )
+"
