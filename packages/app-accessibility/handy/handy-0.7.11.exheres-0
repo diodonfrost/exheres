@@ -3,6 +3,8 @@
 
 require cargo [ crate_path=src-tauri rust_minimum_version=1.85.0 ] github [ user=cjpais tag=v${PV} ]
 
+WORK="${WORKBASE}/Handy-${PV}"
+
 SUMMARY="Free, open source, and extensible speech-to-text application that works completely offline"
 HOMEPAGE="https://handy.computer"
 
