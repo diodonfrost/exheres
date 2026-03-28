@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "data": {
+    "dev-util/glab": {
+      "version": "1.90.0",
+      "revision": "19936043f5660ccf8e5d54ca5ea4defb084fc5dc",
+      "url": "https://gitlab.com/gitlab-org/cli/-/tags/v1.90.0"
+    }
+  }
+}
