@@ -123,7 +123,7 @@ jobs:
           committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           branch: chore/update-old-ver
           title: "chore: update old_ver.json"
-          body: "Auto-update des versions connues apres verification nvchecker."
+          body: "Auto-update known versions after nvchecker check."
           delete-branch: true
 
       - name: Enable auto-merge
@@ -176,7 +176,6 @@ jobs:
             - Upstream release: ${{ matrix.release_url }}
 
             ## Test plan
-            - [ ] `just test-lint` passes
             - [ ] `just test-build ${{ matrix.category }}/${{ matrix.name }}-${{ matrix.new_version }}` succeeds
 
             _Automated version bump by version-check workflow_
