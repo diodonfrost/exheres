@@ -29,7 +29,7 @@ jobs:
       - name: Detect changed exheres
         id: detect
         run: |
-          CHANGED_EXHERES=$(git diff --name-only --diff-filter=AM ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} \
+          CHANGED_EXHERES=$(git diff --name-only --diff-filter=AMR ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} \
             | grep '\.exheres-0$' || true)
 
           if [ -z "$CHANGED_EXHERES" ]; then
