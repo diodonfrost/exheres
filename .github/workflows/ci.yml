@@ -39,12 +39,11 @@ jobs:
             exit 0
           fi
 
-          # Extract atoms: packages/app-admin/helm/helm-4.1.3.exheres-0 -> app-admin/helm-4.1.3
+          # Extract atoms: packages/app-admin/helm/helm-4.1.3.exheres-0 -> app-admin/helm
           PACKAGES=$(echo "$CHANGED_EXHERES" | while read -r exheres; do
             rel="${exheres#packages/}"
             dir=$(dirname "$rel")
-            base=$(basename "$rel" .exheres-0)
-            echo "${dir%/*}/${base}"
+            echo "${dir}"
           done | sort -u | jq -R -s -c 'split("\n") | map(select(. != ""))')
 
           echo "packages=${PACKAGES}" >> "$GITHUB_OUTPUT"
