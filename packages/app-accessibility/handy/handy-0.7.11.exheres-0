@@ -15,9 +15,14 @@ MYOPTIONS=""
 DEPENDENCIES="
     build:
         dev-node/bun-bin
+        sys-devel/cmake
+        sys-libs/vulkan-headers
+        virtual/pkg-config
     build+run:
         dev-libs/glib:2
         dev-libs/libayatana-appindicator
+        sys-libs/vulkan-loader
+        sys-sound/alsa-lib
         wayland-libs/gtk-layer-shell
         x11-libs/gtk+:3
         net-libs/webkit:4.1
