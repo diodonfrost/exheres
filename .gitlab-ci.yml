@@ -1,0 +1,27 @@
+image: exherbo/exherbo_ci
+
+variables:
+  REPO: exheres
+  REPO_NAMESPACE: diodonfrost
+  PALUDIS_REPO: diodonfrost
+
+stages:
+  - test
+  - maintenance
+
+build:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "push"
+  script:
+    - buildtest
+
+version-check:
+  stage: maintenance
+  image: python:3.13
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  script:
+    - bash ci/version-check.sh
