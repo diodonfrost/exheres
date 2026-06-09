@@ -10,7 +10,7 @@ Add the repository configuration to Paludis:
 cat > /etc/paludis/repositories/diodonfrost.conf << 'EOF'
 format = e
 location = /var/db/paludis/repositories/diodonfrost
-sync = git+https://github.com/diodonfrost/exheres.git
+sync = git+https://gitlab.exherbo.org/diodonfrost/exheres.git
 masters = arbor
 EOF
 
@@ -40,19 +40,10 @@ cave sync diodonfrost
 
 ## Build Testing
 
-Requires Docker and [just](https://just.systems) (both available in the devcontainer).
+Packages are built and tested by the official Exherbo CI. Every push opens a
+pipeline that runs `buildtest` (from the `exherbo/exherbo_ci` image): it detects
+the `.exheres-0`/`.exlib` files changed in the branch, syncs the repository to
+that commit and resolves + builds each affected package. Open a merge request
+and the pipeline validates your change automatically.
 
-```bash
-# Build the test Docker image
-just build
-
-# Build a specific package
-just test-build app-admin/terraform
-
-# Open a shell in the test container (optionally resolve a package first)
-just test-shell
-just test-shell app-admin/terraform
-
-# Remove the test Docker image
-just clean
-```
+The same pipeline is defined in [`.gitlab-ci.yml`](.gitlab-ci.yml).
