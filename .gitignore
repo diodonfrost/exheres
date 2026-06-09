@@ -6,3 +6,6 @@
 
 /.cache
 /metadata/cache
+
+/ci/new_ver.json
+/ci/nvchecker-keys.toml
