@@ -102,3 +102,11 @@ source = "github"
 github = "servo/servo"
 use_latest_release = true
 prefix = "v"
+
+# stable ghostty versions are plain tags, the only GitHub "release" is the
+# rolling "tip" prerelease (filtered out by the "v" prefix)
+["x11-apps/ghostty"]
+source = "github"
+github = "ghostty-org/ghostty"
+use_max_tag = true
+prefix = "v"

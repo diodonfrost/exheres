@@ -38,6 +38,7 @@ cave sync diodonfrost
 | dev-util | [inspec](https://www.inspec.io) | Infrastructure compliance testing |
 | kde-plasma | [plasma-meta](https://kde.org/plasma-desktop) | KDE Plasma desktop meta-package |
 | www-client | [servo](https://servo.org) | Independent web rendering engine |
+| x11-apps | [ghostty](https://ghostty.org) | Fast, feature-rich and native terminal emulator |
 
 ## Build Testing
 

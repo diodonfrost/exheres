@@ -1,0 +1,91 @@
+# Copyright 2026 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+SUMMARY="Fast, feature-rich and native terminal emulator"
+HOMEPAGE="https://ghostty.org"
+
+# Use the official source tarball (stable checksums, preprocessed files),
+# not the GitHub auto-generated one — see PACKAGING.md upstream
+DOWNLOADS="https://release.files.ghostty.org/${PV}/ghostty-${PV}.tar.gz"
+
+LICENCES="MIT"
+SLOT="0"
+PLATFORMS="~amd64 ~armv8"
+MYOPTIONS="
+    doc [[ description = [ Build and install manpages and reference docs (needs pandoc) ] ]]
+    wayland
+    X
+    ( wayland X ) [[ number-selected = at-least-one ]]
+"
+
+# Ghostty requires the exact Zig release named in build.zig.zon
+# (minimum_zig_version), bump both packages together
+DEPENDENCIES="
+    build:
+        dev-lang/zig[>=0.15.2]
+        dev-libs/libxml2:2.0
+        dev-util/blueprint-compiler[>=0.16.0]
+        gnome-desktop/gobject-introspection:1
+        sys-devel/gettext
+        sys-libs/ncurses
+        virtual/pkg-config
+        doc? ( app-text/pandoc )
+    build+run:
+        app-arch/bzip2
+        dev-libs/glib:2
+        dev-libs/libadwaita:1[>=1.5.0][gobject-introspection]
+        dev-libs/oniguruma
+        media-libs/fontconfig
+        media-libs/freetype:2
+        media-libs/libpng:=
+        sys-libs/zlib
+        x11-dri/mesa
+        x11-libs/gtk:4.0[>=4.14.0][wayland?][X?]
+        x11-libs/harfbuzz
+        wayland? ( sys-libs/wayland )
+        X? ( x11-libs/libX11 )
+"
+
+# glslang, spirv-cross and simdutf already default to the bundled copies;
+# gtk4-layer-shell defaults to the system one, which Exherbo does not package
+GHOSTTY_BUILD_PARAMS=(
+    --system "${WORKBASE}"/zig-global-cache/p
+    -Dcpu=baseline
+    -Doptimize=ReleaseFast
+    -Dversion-string=${PV}
+    -fno-sys=gtk4-layer-shell
+)
+
+ghostty_build() {
+    edo env ZIG_GLOBAL_CACHE_DIR="${WORKBASE}"/zig-global-cache \
+        zig build \
+            "${GHOSTTY_BUILD_PARAMS[@]}" \
+            -Dgtk-wayland=$(option wayland true false) \
+            -Dgtk-x11=$(option X true false) \
+            -Demit-docs=$(option doc true false) \
+            "${@}"
+}
+
+src_prepare() {
+    default
+
+    # Pre-fetch the Zig package cache, the only step that needs the network;
+    # the actual build runs fully offline against --system
+    esandbox disable_net
+    edo env ZIG_GLOBAL_CACHE_DIR="${WORKBASE}"/zig-global-cache \
+        ./nix/build-support/fetch-zig-cache.sh
+    esandbox enable_net
+}
+
+src_compile() {
+    ghostty_build
+}
+
+src_install() {
+    export DESTDIR="${IMAGE}"
+    ghostty_build --prefix /usr/$(exhost --target)
+
+    # zig build installs everything under the prefix, but architecture
+    # independent data belongs in /usr/share on Exherbo
+    edo mv "${IMAGE}"/usr/$(exhost --target)/share "${IMAGE}"/usr/share
+}
