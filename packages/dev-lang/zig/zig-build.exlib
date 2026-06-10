@@ -1,0 +1,46 @@
+# Copyright 2021 Marc-Antoine Perennou <Marc-Antoine@Perennou.com>
+# Copyright 2026 diodonfrost <diodon.frost@diodonfrost.me>
+# Distributed under the terms of the GNU General Public License v2
+
+myexparam llvm_slot=
+exparam -v LLVM_SLOT llvm_slot
+
+require github [ user=${PN}-lang ] cmake [ ninja=true ]
+
+export_exlib_phases src_install
+
+SUMMARY="General-purpose programming language and toolchain"
+HOMEPAGE="https://ziglang.org"
+
+LICENCES="MIT"
+
+DEPENDENCIES="
+    build+run:
+        dev-lang/clang:${LLVM_SLOT}
+        dev-lang/llvm:${LLVM_SLOT}
+        sys-devel/lld:${LLVM_SLOT}
+        sys-libs/zlib
+"
+
+# unknown target 'test'
+RESTRICT="test"
+
+LLVM_PREFIX="/usr/$(exhost --target)/lib/llvm/${LLVM_SLOT}"
+
+CMAKE_SRC_CONFIGURE_PARAMS=(
+    -Dllvm_ROOT=${LLVM_PREFIX}
+    -DCMAKE_BUILD_TYPE:STRING=Release
+    -DLLD_INCLUDE_DIRS=${LLVM_PREFIX}/include/lld
+    -DLLD_LIBDIRS=${LLVM_PREFIX}/lib/
+
+    -DZIG_SINGLE_THREADED:BOOL=off
+    -DZIG_TARGET_TRIPLE:STRING=native
+
+    -DZIG_STATIC:BOOL=off
+    -DZIG_STATIC_ZLIB:BOOL=off
+)
+
+zig-build_src_install() {
+    cmake_src_install
+    edo find "${IMAGE}" -type d -empty -delete
+}

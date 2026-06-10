@@ -31,6 +31,7 @@ cave sync diodonfrost
 | app-admin | [vagrant](https://www.vagrantup.com) | Development environment manager |
 | app-crypt | [sops](https://github.com/getsops/sops) | Encrypted file editor for secrets |
 | dev-build | [just](https://just.systems) | Command runner (alternative to Make) |
+| dev-lang | [zig](https://ziglang.org) | General-purpose programming language and toolchain |
 | dev-node | [bun-bin](https://bun.sh) | JavaScript runtime and toolkit (pre-built binary) |
 | dev-util | [github-cli](https://cli.github.com) | GitHub CLI |
 | dev-util | [glab](https://gitlab.com/gitlab-org/cli) | GitLab CLI |

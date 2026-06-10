@@ -68,6 +68,11 @@ source = "github"
 github = "casey/just"
 use_latest_release = true
 
+["dev-lang/zig"]
+source = "github"
+github = "ziglang/zig"
+use_max_tag = true
+
 ["dev-node/bun-bin"]
 source = "github"
 github = "oven-sh/bun"
