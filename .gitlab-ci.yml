@@ -11,10 +11,28 @@ stages:
 
 build:
   stage: test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-      when: never
-    - if: $CI_PIPELINE_SOURCE == "push"
+  before_script:
+    # This repository is not listed in ::unavailable-unofficial yet, so give
+    # buildtest a local index entry to enable it from. Drop this once the
+    # repository is officially registered. The CleverCloud dependency is only
+    # needed while the master branch still declares it in layout.conf.
+    - |
+      mkdir -p /tmp/local-index
+      cat > /tmp/local-index/diodonfrost.repository <<EOF
+      format = unavailable-2
+      repo_format = e
+      sync = git+https://gitlab.exherbo.org/diodonfrost/exheres.git
+      dependencies = repository/arbor, repository/CleverCloud
+      repo_name = diodonfrost
+      homepage = https://gitlab.exherbo.org/diodonfrost/exheres
+      description = diodonfrost's Exherbo packages
+      EOF
+      cat > /etc/paludis/repositories/local-index.conf <<EOF
+      format = unavailable
+      name = local-index
+      location = /tmp/local-index
+      importance = -100
+      EOF
   script:
     - buildtest
 
