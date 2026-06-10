@@ -13,9 +13,7 @@ SLOT="0"
 PLATFORMS="~amd64 ~armv8"
 MYOPTIONS="
     doc [[ description = [ Build and install manpages and reference docs (needs pandoc) ] ]]
-    wayland
-    X
-    ( wayland X ) [[ number-selected = at-least-one ]]
+    X [[ description = [ Build the X11 backend; the Wayland backend is always built ] ]]
 "
 
 # Ghostty requires the exact Zig release named in build.zig.zon
@@ -40,9 +38,9 @@ DEPENDENCIES="
         media-libs/libpng:=
         sys-libs/zlib
         x11-dri/mesa
-        x11-libs/gtk:4.0[>=4.14.0][wayland?][X?]
+        sys-libs/wayland
+        x11-libs/gtk:4.0[>=4.14.0][wayland][X?]
         x11-libs/harfbuzz
-        wayland? ( sys-libs/wayland )
         X? ( x11-libs/libX11 )
 "
 
@@ -60,7 +58,7 @@ ghostty_build() {
     edo env ZIG_GLOBAL_CACHE_DIR="${WORKBASE}"/zig-global-cache \
         zig build \
             "${GHOSTTY_BUILD_PARAMS[@]}" \
-            -Dgtk-wayland=$(option wayland true false) \
+            -Dgtk-wayland=true \
             -Dgtk-x11=$(option X true false) \
             -Demit-docs=$(option doc true false) \
             "${@}"
