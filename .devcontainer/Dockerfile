@@ -35,3 +35,6 @@ RUN ansible-galaxy role install diodonfrost.p10k && \
 
 RUN ansible-galaxy role install diodonfrost.just && \
     ansible-pull -U https://github.com/diodonfrost/ansible-role-just tests/test.yml
+
+RUN ansible-galaxy role install diodonfrost.glab && \
+    ansible-pull -U https://github.com/diodonfrost/ansible-role-glab tests/test.yml

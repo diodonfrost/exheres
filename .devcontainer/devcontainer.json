@@ -1,5 +1,8 @@
 {
   "build": { "dockerfile": "Dockerfile" },
+"mounts": [
+    "source=${localEnv:HOME}/.config/glab-cli,target=/home/vscode/.config/glab-cli,type=bind,consistency=cached",
+  ],
 
   "customizations": {
     "vscode": {
